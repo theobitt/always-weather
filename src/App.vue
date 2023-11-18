@@ -1,18 +1,35 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <input @change="handleSearch()" type="text" v-model="cidade">
+    <WeatherCard :weatherData="weatherData" />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
+
+<script setup>
+import WeatherCard from './components/WeatherCard.vue'
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+
+const apiKey = '190dcd76cf4cabc87e9f07e305df8516';
+const weatherData = ref(null);
+const cidade = ref("Rio de Janeiro");
+
+function handleSearch() {
+  axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${cidade.value}&appid=${apiKey}`)
+    .then(response => {
+      weatherData.value = response.data;
+      console.log(weatherData.value)
+    })
+    .catch(error => {
+      console.error('Erro na solicitação à API de previsão do tempo:', error);
+    });
+}
+
+onMounted(() => {
+  // Chamada inicial para 'Rio de Janeiro'
+  handleSearch();
+});
+</script>
 
 <style scoped>
 .logo {
